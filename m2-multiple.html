@@ -64,7 +64,7 @@
       flex-grow: 1;
     }
     
-    /* Liste des lignes */
+    /* Liste des lignes avec Scrollbar personnalisée */
     .rows-container {
       display: flex;
       flex-direction: column;
@@ -72,26 +72,40 @@
       max-height: 280px;
       overflow-y: auto;
       margin-bottom: 16px;
-      padding-right: 4px;
+      padding-right: 8px;
     }
+
+    /* Style du curseur de scrollbar (Chrome / Safari / iOS) */
+    .rows-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .rows-container::-webkit-scrollbar-track {
+      background: #1f2937;
+      border-radius: 10px;
+    }
+    .rows-container::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 10px;
+    }
+
     .row-item {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       background: #1f2937;
       border: 1px solid #374151;
       border-radius: 12px;
       padding: 8px 10px;
     }
     .row-item input {
-      width: 65px;
+      width: 100px;
       min-width: 0;
       background: #111827;
       border: 1px solid #374151;
       border-radius: 8px;
-      padding: 6px 8px;
+      padding: 8px 10px;
       color: #ffffff;
-      font-size: 0.88rem;
+      font-size: 0.95rem;
       outline: none;
       font-weight: 600;
       text-align: center;
@@ -103,14 +117,14 @@
       background: #111827;
       border: 1px solid #374151;
       border-radius: 8px;
-      padding: 6px 4px;
+      padding: 8px 6px;
       color: #ffffff;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       outline: none;
       font-weight: 600;
     }
-    .row-area {
-      font-size: 0.85rem;
+    .row-weight {
+      font-size: 0.9rem;
       font-weight: 700;
       color: var(--primary-color);
       flex: 1;
@@ -253,23 +267,22 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const savedRows = JSON.parse(localStorage.getItem('m2_saved_rows'));
+      const savedRows = JSON.parse(localStorage.getItem('m2_direct_saved_rows'));
       if (savedRows && savedRows.length > 0) {
-        savedRows.forEach(item => addRow(item.l, item.w, item.th));
+        savedRows.forEach(item => addRow(item.area, item.th));
       } else {
         addRow();
       }
       calculateTotal();
     });
 
-    function addRow(l = '', w = '', th = '2') {
+    function addRow(area = '', th = '2') {
       const div = document.createElement('div');
       div.className = 'row-item';
       div.innerHTML = `
-        <input type="number" inputmode="decimal" placeholder="L (cm)" value="${l}" oninput="calculateTotal()">
-        <input type="number" inputmode="decimal" placeholder="l (cm)" value="${w}" oninput="calculateTotal()">
+        <input type="number" inputmode="decimal" placeholder="Surface m²" value="${area}" oninput="calculateTotal()">
         <select onchange="calculateTotal()">
-          <option value="1.5" ${th == 1.5 ? 'selected' : ''}>1.5</option>
+          <option value="1.5" ${th == 1.5 ? 'selected' : ''}>1.5 cm</option>
           <option value="2" ${th == 2 ? 'selected' : ''}>2 cm</option>
           <option value="3" ${th == 3 ? 'selected' : ''}>3 cm</option>
           <option value="4" ${th == 4 ? 'selected' : ''}>4 cm</option>
@@ -280,7 +293,7 @@
           <option value="15" ${th == 15 ? 'selected' : ''}>15 cm</option>
           <option value="20" ${th == 20 ? 'selected' : ''}>20 cm</option>
         </select>
-        <span class="row-area">0.00 m²</span>
+        <span class="row-weight">0.000 T</span>
         <button class="btn-delete-row" onclick="removeRow(this)">✕</button>
       `;
       container.appendChild(div);
@@ -292,9 +305,7 @@
       if (rows.length > 1) {
         btn.closest('.row-item').remove();
       } else {
-        const inputs = rows[0].querySelectorAll('input');
-        inputs[0].value = '';
-        inputs[1].value = '';
+        rows[0].querySelector('input').value = '';
       }
       calculateTotal();
       saveData(false);
@@ -306,22 +317,20 @@
       const rows = container.querySelectorAll('.row-item');
 
       rows.forEach(row => {
-        const inputs = row.querySelectorAll('input');
+        const input = row.querySelector('input');
         const select = row.querySelector('select');
-        const areaSpan = row.querySelector('.row-area');
+        const weightSpan = row.querySelector('.row-weight');
         
-        const l = parseFloat(inputs[0].value) || 0;
-        const w = parseFloat(inputs[1].value) || 0;
-        const th = parseFloat(select.value) || 2;
+        const sqM = parseFloat(input.value) || 0;
+        const thCm = parseFloat(select.value) || 2;
 
-        const sqM = (l * w) / 10000;
-        const cuM = (l * w * th) / 1000000;
+        const cuM = sqM * (thCm / 100);
         const tons = cuM * DENSITY;
 
         totalSqM += sqM;
         totalTons += tons;
 
-        areaSpan.innerText = sqM.toFixed(2) + ' m²';
+        weightSpan.innerText = tons.toFixed(3) + ' T';
       });
 
       const totalKg = totalTons * 1000;
@@ -335,22 +344,21 @@
       container.innerHTML = '';
       addRow();
       calculateTotal();
-      localStorage.removeItem('m2_saved_rows');
+      localStorage.removeItem('m2_direct_saved_rows');
       showToast('Réinitialisé !');
     }
 
     function saveData(showNotification = true) {
       const rows = container.querySelectorAll('.row-item');
       const data = Array.from(rows).map(row => {
-        const inputs = row.querySelectorAll('input');
+        const input = row.querySelector('input');
         const select = row.querySelector('select');
         return {
-          l: inputs[0].value,
-          w: inputs[1].value,
+          area: input.value,
           th: select.value
         };
       });
-      localStorage.setItem('m2_saved_rows', JSON.stringify(data));
+      localStorage.setItem('m2_direct_saved_rows', JSON.stringify(data));
       if (showNotification) {
         showToast('Enregistré !');
       }
