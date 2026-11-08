@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M² Cumulés — Pierre Bleue</title>
+  <style>
+    :root {
+      --primary-color: #10b981;
+      --primary-rgb: 16, 185, 129;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      touch-action: manipulation;
+    }
+    body {
+      background-color: #0b0f19;
+      color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .header-calc {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .btn-back {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: color 0.3s;
+    }
+    .btn-back:active {
+      transform: scale(0.95);
+    }
+    h1 {
+      font-size: 1.2rem;
+      color: #ffffff;
+      font-weight: 700;
+      text-align: center;
+      flex-grow: 1;
+    }
+    
+    /* Liste des lignes */
+    .rows-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      padding-right: 4px;
+    }
+    .row-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 8px 10px;
+    }
+    .row-item input {
+      width: 65px;
+      min-width: 0;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 6px 8px;
+      color: #ffffff;
+      font-size: 0.88rem;
+      outline: none;
+      font-weight: 600;
+      text-align: center;
+    }
+    .row-item input:focus {
+      border-color: var(--primary-color);
+    }
+    .row-item select {
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 6px 4px;
+      color: #ffffff;
+      font-size: 0.85rem;
+      outline: none;
+      font-weight: 600;
+    }
+    .row-area {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      flex: 1;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .btn-delete-row {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 2px 4px;
+      flex-shrink: 0;
+    }
+
+    /* Boutons d'action */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-action {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 10px;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-action:active {
+      transform: scale(0.96);
+    }
+    .btn-add {
+      grid-column: span 2;
+      background: rgba(var(--primary-rgb), 0.15);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    .btn-save {
+      border-color: var(--primary-color);
+      color: #ffffff;
+      background: var(--primary-color);
+    }
+    .btn-reset {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+      background: #1f2937;
+    }
+
+    .results {
+      background: rgba(var(--primary-rgb), 0.05);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+      border-radius: 16px;
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .secondary-result {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+    .main-result {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 4px 0;
+      letter-spacing: -0.5px;
+      transition: color 0.3s;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--primary-color);
+      color: #0b0f19;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header-calc">
+      <a href="index.html" class="btn-back">← Accueil</a>
+      <h1>M² Cumulés</h1>
+      <div style="width: 70px;"></div>
+    </div>
+
+    <!-- Liste dynamique des lignes -->
+    <div id="rows-container" class="rows-container"></div>
+
+    <!-- Boutons d'action -->
+    <div class="actions-grid">
+      <button class="btn-action btn-add" onclick="addRow()">+ Ajouter une ligne</button>
+      <button class="btn-action btn-save" onclick="saveData(true)">Enregistrer</button>
+      <button class="btn-action btn-reset" onclick="resetAll()">Effacer tout</button>
+    </div>
+
+    <!-- Total -->
+    <div class="results">
+      <div class="secondary-result" id="totalArea">Total : 0.00 m²</div>
+      <div class="main-result" id="totalT">0.000 T</div>
+      <div class="secondary-result" id="totalKg">0 kg</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Sauvegardé !</div>
+
+  <script>
+    const DENSITY = 2.68;
+    const container = document.getElementById('rows-container');
+
+    const savedColor = localStorage.getItem('themeColor');
+    const savedRgb = localStorage.getItem('themeRgb');
+    if (savedColor && savedRgb) {
+      document.documentElement.style.setProperty('--primary-color', savedColor);
+      document.documentElement.style.setProperty('--primary-rgb', savedRgb);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedRows = JSON.parse(localStorage.getItem('m2_saved_rows'));
+      if (savedRows && savedRows.length > 0) {
+        savedRows.forEach(item => addRow(item.l, item.w, item.th));
+      } else {
+        addRow();
+      }
+      calculateTotal();
+    });
+
+    function addRow(l = '', w = '', th = '2') {
+      const div = document.createElement('div');
+      div.className = 'row-item';
+      div.innerHTML = `
+        <input type="number" inputmode="decimal" placeholder="L (cm)" value="${l}" oninput="calculateTotal()">
+        <input type="number" inputmode="decimal" placeholder="l (cm)" value="${w}" oninput="calculateTotal()">
+        <select onchange="calculateTotal()">
+          <option value="1.5" ${th == 1.5 ? 'selected' : ''}>1.5</option>
+          <option value="2" ${th == 2 ? 'selected' : ''}>2 cm</option>
+          <option value="3" ${th == 3 ? 'selected' : ''}>3 cm</option>
+          <option value="4" ${th == 4 ? 'selected' : ''}>4 cm</option>
+          <option value="5" ${th == 5 ? 'selected' : ''}>5 cm</option>
+          <option value="6" ${th == 6 ? 'selected' : ''}>6 cm</option>
+          <option value="8" ${th == 8 ? 'selected' : ''}>8 cm</option>
+          <option value="10" ${th == 10 ? 'selected' : ''}>10 cm</option>
+          <option value="15" ${th == 15 ? 'selected' : ''}>15 cm</option>
+          <option value="20" ${th == 20 ? 'selected' : ''}>20 cm</option>
+        </select>
+        <span class="row-area">0.00 m²</span>
+        <button class="btn-delete-row" onclick="removeRow(this)">✕</button>
+      `;
+      container.appendChild(div);
+      calculateTotal();
+    }
+
+    function removeRow(btn) {
+      const rows = container.querySelectorAll('.row-item');
+      if (rows.length > 1) {
+        btn.closest('.row-item').remove();
+      } else {
+        const inputs = rows[0].querySelectorAll('input');
+        inputs[0].value = '';
+        inputs[1].value = '';
+      }
+      calculateTotal();
+      saveData(false);
+    }
+
+    function calculateTotal() {
+      let totalSqM = 0;
+      let totalTons = 0;
+      const rows = container.querySelectorAll('.row-item');
+
+      rows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const select = row.querySelector('select');
+        const areaSpan = row.querySelector('.row-area');
+        
+        const l = parseFloat(inputs[0].value) || 0;
+        const w = parseFloat(inputs[1].value) || 0;
+        const th = parseFloat(select.value) || 2;
+
+        const sqM = (l * w) / 10000;
+        const cuM = (l * w * th) / 1000000;
+        const tons = cuM * DENSITY;
+
+        totalSqM += sqM;
+        totalTons += tons;
+
+        areaSpan.innerText = sqM.toFixed(2) + ' m²';
+      });
+
+      const totalKg = totalTons * 1000;
+
+      document.getElementById('totalArea').innerText = 'Total : ' + totalSqM.toFixed(2) + ' m²';
+      document.getElementById('totalT').innerText = totalTons.toFixed(3) + ' T';
+      document.getElementById('totalKg').innerText = Math.round(totalKg).toLocaleString('fr-FR') + ' kg';
+    }
+
+    function resetAll() {
+      container.innerHTML = '';
+      addRow();
+      calculateTotal();
+      localStorage.removeItem('m2_saved_rows');
+      showToast('Réinitialisé !');
+    }
+
+    function saveData(showNotification = true) {
+      const rows = container.querySelectorAll('.row-item');
+      const data = Array.from(rows).map(row => {
+        const inputs = row.querySelectorAll('input');
+        const select = row.querySelector('select');
+        return {
+          l: inputs[0].value,
+          w: inputs[1].value,
+          th: select.value
+        };
+      });
+      localStorage.setItem('m2_saved_rows', JSON.stringify(data));
+      if (showNotification) {
+        showToast('Enregistré !');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+  </script>
+</body>
+</html>
