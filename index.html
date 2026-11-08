@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Pierre Bleue — Accueil</title>
+  
+  <!-- Forcer le nom "MCube" sur l'écran d'accueil iOS/iPadOS -->
+  <title>MCube</title>
+  <meta name="apple-mobile-web-app-title" content="MCube">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <!-- Icône de l'application -->
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
   <style>
     :root {
       --primary-color: #10b981;
@@ -34,7 +42,7 @@
     }
     html, body {
       height: 100%;
-      overflow: hidden; /* Empêche le scroll de la page entière */
+      overflow: hidden;
     }
     body {
       background-color: var(--bg-color);
@@ -283,7 +291,7 @@
       <span class="arrow-icon">➔</span>
     </a>
 
-    <!-- Menu Hamburger Drawer -->
+    <!-- Menu Hamburger -->
     <div id="drawer" class="drawer">
       <div class="drawer-header">
         <div class="drawer-title">Paramètres</div>
@@ -347,7 +355,6 @@
       document.getElementById('mode-text').innerText = mode === 'light' ? 'Passer au Mode Sombre' : 'Passer au Mode Clair';
     }
 
-    // Charger les préférences
     const savedColor = localStorage.getItem('themeColor');
     const savedRgb = localStorage.getItem('themeRgb');
     if (savedColor && savedRgb) {
