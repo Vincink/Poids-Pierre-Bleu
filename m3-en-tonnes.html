@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M³ en Tonnes — Pierre Bleue</title>
+  <style>
+    :root {
+      --primary-color: #10b981;
+      --primary-rgb: 16, 185, 129;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      touch-action: manipulation;
+    }
+    body {
+      background-color: #0b0f19;
+      color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .header-calc {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .btn-back {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: color 0.3s;
+    }
+    .btn-back:active {
+      transform: scale(0.95);
+    }
+    h1 {
+      font-size: 1.2rem;
+      color: #ffffff;
+      font-weight: 700;
+      text-align: center;
+      flex-grow: 1;
+    }
+    .field {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="number"] {
+      width: 100%;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #ffffff;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="number"]:focus {
+      border-color: var(--primary-color);
+    }
+    .results {
+      background: rgba(var(--primary-rgb), 0.05);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-top: 24px;
+    }
+    .secondary-result {
+      font-size: 0.95rem;
+      color: #9ca3af;
+      margin-bottom: 4px;
+    }
+    .main-result {
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 8px 0;
+      letter-spacing: -0.5px;
+      transition: color 0.3s;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header-calc">
+      <a href="index.html" class="btn-back">← Accueil</a>
+      <h1>M³ en Tonnes</h1>
+      <div style="width: 70px;"></div>
+    </div>
+
+    <div class="field">
+      <label>Volume (m³)</label>
+      <input type="number" id="volume" inputmode="decimal" placeholder="Ex : 1.5" oninput="calculate()">
+    </div>
+
+    <div class="results">
+      <div class="secondary-result" id="densityInfo">Densité : 2.68 t/m³</div>
+      <div class="main-result" id="weightT">0.000 T</div>
+      <div class="secondary-result" id="weightKg">0 kg</div>
+    </div>
+  </div>
+
+  <script>
+    const savedColor = localStorage.getItem('themeColor');
+    const savedRgb = localStorage.getItem('themeRgb');
+    if (savedColor && savedRgb) {
+      document.documentElement.style.setProperty('--primary-color', savedColor);
+      document.documentElement.style.setProperty('--primary-rgb', savedRgb);
+    }
+
+    function calculate() {
+      const vol = parseFloat(document.getElementById('volume').value) || 0;
+      const density = 2.68;
+
+      const weightTons = vol * density;
+      const weightKg = weightTons * 1000;
+
+      document.getElementById('weightT').innerText = weightTons.toFixed(3) + ' T';
+      document.getElementById('weightKg').innerText = Math.round(weightKg).toLocaleString('fr-FR') + ' kg';
+    }
+
+    calculate();
+  </script>
+</body>
+</html>
