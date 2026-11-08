@@ -64,7 +64,7 @@
       flex-grow: 1;
     }
     
-    /* Liste des lignes */
+    /* Liste des lignes avec Scrollbar personnalisée aux couleurs du thème */
     .rows-container {
       display: flex;
       flex-direction: column;
@@ -72,8 +72,20 @@
       max-height: 260px;
       overflow-y: auto;
       margin-bottom: 16px;
-      padding-right: 4px;
+      padding-right: 8px;
     }
+    .rows-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .rows-container::-webkit-scrollbar-track {
+      background: #1f2937;
+      border-radius: 10px;
+    }
+    .rows-container::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+      border-radius: 10px;
+    }
+
     .row-item {
       display: flex;
       align-items: center;
@@ -86,12 +98,18 @@
     .row-item input {
       width: 100px;
       min-width: 0;
-      background: transparent;
-      border: none;
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 8px 10px;
       color: #ffffff;
       font-size: 0.95rem;
       outline: none;
       font-weight: 600;
+      text-align: center;
+    }
+    .row-item input:focus {
+      border-color: var(--primary-color);
     }
     .row-weight {
       font-size: 0.9rem;
