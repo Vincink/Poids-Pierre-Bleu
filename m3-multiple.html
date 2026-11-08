@@ -8,6 +8,22 @@
     :root {
       --primary-color: #10b981;
       --primary-rgb: 16, 185, 129;
+      --bg-color: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #ffffff;
+      --text-sub: #9ca3af;
+      --btn-bg: #1f2937;
+      --btn-border: #374151;
+    }
+    [data-theme="light"] {
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --card-border: #e5e7eb;
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --btn-bg: #f9fafb;
+      --btn-border: #d1d5db;
     }
     * {
       box-sizing: border-box;
@@ -16,23 +32,27 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       touch-action: manipulation;
     }
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
     body {
-      background-color: #0b0f19;
-      color: #f3f4f6;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 16px;
-      min-height: 100vh;
+      transition: background-color 0.3s;
     }
     .card {
-      background: #111827;
-      border: 1px solid #1f2937;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 20px;
       padding: 24px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
     .header-calc {
       display: flex;
@@ -41,68 +61,65 @@
       margin-bottom: 20px;
     }
     .btn-back {
-      background: #1f2937;
-      border: 1px solid #374151;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 10px;
       padding: 8px 12px;
       color: var(--primary-color);
       font-weight: 600;
       font-size: 0.85rem;
-      cursor: pointer;
       text-decoration: none;
-      display: inline-block;
-      transition: color 0.3s;
-    }
-    .btn-back:active {
-      transform: scale(0.95);
     }
     h1 {
       font-size: 1.2rem;
-      color: #ffffff;
+      color: var(--text-main);
       font-weight: 700;
       text-align: center;
       flex-grow: 1;
     }
     
-    /* Liste des lignes avec Scrollbar personnalisée aux couleurs du thème */
+    /* Scrollbar personnalisée & compatible Safari / Chrome */
     .rows-container {
       display: flex;
       flex-direction: column;
       gap: 10px;
       max-height: 260px;
-      overflow-y: auto;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
       margin-bottom: 16px;
-      padding-right: 8px;
+      padding-right: 10px;
     }
     .rows-container::-webkit-scrollbar {
-      width: 8px;
+      width: 10px !important;
+      display: block !important;
     }
     .rows-container::-webkit-scrollbar-track {
-      background: #1f2937;
+      background: var(--btn-bg);
       border-radius: 10px;
     }
     .rows-container::-webkit-scrollbar-thumb {
-      background: var(--primary-color);
+      background-color: var(--primary-color) !important;
       border-radius: 10px;
+      border: 2px solid var(--btn-bg);
     }
 
     .row-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      background: #1f2937;
-      border: 1px solid #374151;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 12px;
       padding: 8px 12px;
     }
     .row-item input {
       width: 100px;
       min-width: 0;
-      background: #111827;
-      border: 1px solid #374151;
+      background: var(--card-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 8px;
       padding: 8px 10px;
-      color: #ffffff;
+      color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
       font-weight: 600;
@@ -117,9 +134,6 @@
       color: var(--primary-color);
       flex: 1;
       text-align: right;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
     .btn-delete-row {
       background: none;
@@ -129,10 +143,8 @@
       font-weight: bold;
       cursor: pointer;
       padding: 2px 6px;
-      flex-shrink: 0;
     }
 
-    /* Boutons d'action */
     .actions-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -140,21 +152,17 @@
       margin-bottom: 20px;
     }
     .btn-action {
-      background: #1f2937;
-      border: 1px solid #374151;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 10px;
       padding: 10px;
-      color: #ffffff;
+      color: var(--text-main);
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s;
-    }
-    .btn-action:active {
-      transform: scale(0.96);
     }
     .btn-add {
       grid-column: span 2;
@@ -170,7 +178,6 @@
     .btn-reset {
       border-color: rgba(239, 68, 68, 0.4);
       color: #ef4444;
-      background: #1f2937;
     }
 
     .results {
@@ -182,7 +189,7 @@
     }
     .secondary-result {
       font-size: 0.9rem;
-      color: #9ca3af;
+      color: var(--text-sub);
       margin-bottom: 2px;
     }
     .main-result {
@@ -190,8 +197,6 @@
       font-weight: 800;
       color: var(--primary-color);
       margin: 4px 0;
-      letter-spacing: -0.5px;
-      transition: color 0.3s;
     }
     
     .toast {
@@ -205,7 +210,6 @@
       font-size: 0.85rem;
       padding: 8px 16px;
       border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
       transition: transform 0.3s ease;
       z-index: 100;
     }
@@ -223,17 +227,14 @@
       <div style="width: 70px;"></div>
     </div>
 
-    <!-- Liste dynamique des lignes -->
     <div id="rows-container" class="rows-container"></div>
 
-    <!-- Boutons d'action -->
     <div class="actions-grid">
       <button class="btn-action btn-add" onclick="addRow()">+ Ajouter une ligne</button>
       <button class="btn-action btn-save" onclick="saveData(true)">Enregistrer</button>
       <button class="btn-action btn-reset" onclick="resetAll()">Effacer tout</button>
     </div>
 
-    <!-- Total -->
     <div class="results">
       <div class="secondary-result" id="totalVol">Total : 0.000 m³</div>
       <div class="main-result" id="totalT">0.000 T</div>
@@ -253,6 +254,8 @@
       document.documentElement.style.setProperty('--primary-color', savedColor);
       document.documentElement.style.setProperty('--primary-rgb', savedRgb);
     }
+    const savedMode = localStorage.getItem('displayMode') || 'dark';
+    document.documentElement.setAttribute('data-theme', savedMode);
 
     window.addEventListener('DOMContentLoaded', () => {
       const savedRows = JSON.parse(localStorage.getItem('m3_saved_rows'));
@@ -295,10 +298,8 @@
         const input = row.querySelector('input');
         const weightSpan = row.querySelector('.row-weight');
         const vol = parseFloat(input.value) || 0;
-        
         const tons = vol * DENSITY;
         totalVol += vol;
-
         weightSpan.innerText = tons.toFixed(3) + ' T';
       });
 
@@ -322,9 +323,7 @@
       const inputs = container.querySelectorAll('input');
       const values = Array.from(inputs).map(input => input.value);
       localStorage.setItem('m3_saved_rows', JSON.stringify(values));
-      if (showNotification) {
-        showToast('Enregistré !');
-      }
+      if (showNotification) showToast('Enregistré !');
     }
 
     function showToast(msg) {
