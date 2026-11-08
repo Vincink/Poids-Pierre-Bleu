@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Calcul tranches — Pierre Bleue</title>
   <style>
+    :root {
+      --primary-color: #10b981;
+      --primary-rgb: 16, 185, 129;
+    }
     * {
       box-sizing: border-box;
       margin: 0;
@@ -41,12 +45,13 @@
       border: 1px solid #374151;
       border-radius: 10px;
       padding: 8px 12px;
-      color: #10b981;
+      color: var(--primary-color);
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
+      transition: color 0.3s;
     }
     .btn-back:active {
       transform: scale(0.95);
@@ -80,7 +85,7 @@
       transition: border-color 0.2s;
     }
     input[type="number"]:focus {
-      border-color: #10b981;
+      border-color: var(--primary-color);
     }
     .thickness-grid {
       display: grid;
@@ -105,10 +110,10 @@
       transform: scale(0.96);
     }
     .thickness-btn.active {
-      background: rgba(16, 185, 129, 0.15);
-      border-color: #10b981;
-      color: #10b981;
-      box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+      background: rgba(var(--primary-rgb), 0.15);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      box-shadow: 0 0 12px rgba(var(--primary-rgb), 0.25);
     }
     .counter-wrapper {
       display: flex;
@@ -135,7 +140,7 @@
       transition: background 0.2s;
     }
     .btn-qty:active {
-      background: #10b981;
+      background: var(--primary-color);
     }
     .counter-input {
       border: none !important;
@@ -146,8 +151,8 @@
       font-weight: 600;
     }
     .results {
-      background: rgba(16, 185, 129, 0.05);
-      border: 1px solid rgba(16, 185, 129, 0.2);
+      background: rgba(var(--primary-rgb), 0.05);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
       border-radius: 16px;
       padding: 20px;
       text-align: center;
@@ -161,9 +166,10 @@
     .main-result {
       font-size: 2.5rem;
       font-weight: 800;
-      color: #10b981;
+      color: var(--primary-color);
       margin: 6px 0;
       letter-spacing: -0.5px;
+      transition: color 0.3s;
     }
   </style>
 </head>
@@ -171,7 +177,6 @@
 
   <div class="card">
     <div class="header-calc">
-      <!-- Redirige directement vers index.html -->
       <a href="index.html" class="btn-back">← Accueil</a>
       <h1>Calcul tranches</h1>
       <div style="width: 70px;"></div>
@@ -225,6 +230,13 @@
 
   <script>
     let selectedThickness = 2;
+
+    const savedColor = localStorage.getItem('themeColor');
+    const savedRgb = localStorage.getItem('themeRgb');
+    if (savedColor && savedRgb) {
+      document.documentElement.style.setProperty('--primary-color', savedColor);
+      document.documentElement.style.setProperty('--primary-rgb', savedRgb);
+    }
 
     function selectThickness(val, btn) {
       selectedThickness = val;
