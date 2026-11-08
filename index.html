@@ -8,6 +8,22 @@
     :root {
       --primary-color: #10b981;
       --primary-rgb: 16, 185, 129;
+      --bg-color: #0b0f19;
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --text-main: #ffffff;
+      --text-sub: #9ca3af;
+      --btn-bg: #1f2937;
+      --btn-border: #374151;
+    }
+    [data-theme="light"] {
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --card-border: #e5e7eb;
+      --text-main: #111827;
+      --text-sub: #4b5563;
+      --btn-bg: #f9fafb;
+      --btn-border: #d1d5db;
     }
     * {
       box-sizing: border-box;
@@ -16,25 +32,30 @@
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       touch-action: manipulation;
     }
+    html, body {
+      height: 100%;
+      overflow: hidden; /* Empêche le scroll de la page entière */
+    }
     body {
-      background-color: #0b0f19;
-      color: #f3f4f6;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 16px;
-      min-height: 100vh;
+      transition: background-color 0.3s;
     }
     .card {
-      background: #111827;
-      border: 1px solid #1f2937;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 20px;
       padding: 24px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       position: relative;
       overflow: hidden;
+      transition: background 0.3s, border-color 0.3s;
     }
     .header-bar {
       display: flex;
@@ -56,30 +77,29 @@
       display: block;
       width: 22px;
       height: 2px;
-      background-color: #9ca3af;
+      background-color: var(--text-sub);
       border-radius: 2px;
-      transition: all 0.25s ease;
     }
     .home-title {
       font-size: 1.6rem;
       font-weight: 800;
       text-align: center;
-      color: #ffffff;
+      color: var(--text-main);
       margin-bottom: 8px;
     }
     .home-subtitle {
       font-size: 0.9rem;
-      color: #9ca3af;
+      color: var(--text-sub);
       text-align: center;
       margin-bottom: 28px;
     }
     .menu-btn {
       width: 100%;
-      background: #1f2937;
-      border: 1px solid #374151;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 14px;
       padding: 16px;
-      color: #ffffff;
+      color: var(--text-main);
       font-size: 0.98rem;
       font-weight: 600;
       display: flex;
@@ -108,12 +128,10 @@
       stroke-linejoin: round;
       fill: none;
       flex-shrink: 0;
-      transition: stroke 0.3s;
     }
     .arrow-icon {
       font-size: 1.1rem;
       color: var(--primary-color);
-      transition: color 0.3s;
     }
     .drawer {
       position: absolute;
@@ -121,7 +139,7 @@
       right: -100%;
       width: 100%;
       height: 100%;
-      background: #111827;
+      background: var(--card-bg);
       border-radius: 20px;
       padding: 24px;
       box-sizing: border-box;
@@ -142,25 +160,25 @@
     .drawer-title {
       font-size: 1.2rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--text-main);
     }
     .btn-close {
-      background: #1f2937;
-      border: 1px solid #374151;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 8px;
-      color: #9ca3af;
+      color: var(--text-sub);
       font-size: 1.2rem;
       width: 32px;
       height: 32px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    }
+    .setting-group {
+      margin-bottom: 20px;
     }
     .theme-section-title {
       font-size: 0.85rem;
-      color: #9ca3af;
-      margin-bottom: 12px;
+      color: var(--text-sub);
+      margin-bottom: 10px;
       font-weight: 500;
     }
     .theme-grid {
@@ -169,25 +187,37 @@
       gap: 10px;
     }
     .theme-option {
-      background: #1f2937;
-      border: 1px solid #374151;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
       border-radius: 12px;
       padding: 12px;
       display: flex;
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      color: #f3f4f6;
+      color: var(--text-main);
       font-size: 0.9rem;
       font-weight: 500;
-    }
-    .theme-option:active {
-      transform: scale(0.96);
     }
     .color-dot {
       width: 16px;
       height: 16px;
       border-radius: 50%;
+    }
+    .mode-toggle-btn {
+      width: 100%;
+      background: var(--btn-bg);
+      border: 1px solid var(--btn-border);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
   </style>
 </head>
@@ -205,7 +235,6 @@
     <div class="home-title">Pierre Bleue</div>
     <div class="home-subtitle">Outils de calcul sur-mesure</div>
 
-    <!-- Bouton 1 : Tranches -->
     <a href="calcul-tranches.html" class="menu-btn">
       <div class="btn-left">
         <svg class="btn-icon" viewBox="0 0 24 24">
@@ -218,7 +247,6 @@
       <span class="arrow-icon">➔</span>
     </a>
 
-    <!-- Bouton 2 : M³ en Tonnes -->
     <a href="m3-en-tonnes.html" class="menu-btn">
       <div class="btn-left">
         <svg class="btn-icon" viewBox="0 0 24 24">
@@ -230,7 +258,6 @@
       <span class="arrow-icon">➔</span>
     </a>
 
-    <!-- Bouton 3 : M³ Cumulés -->
     <a href="m3-multiple.html" class="menu-btn">
       <div class="btn-left">
         <svg class="btn-icon" viewBox="0 0 24 24">
@@ -244,7 +271,6 @@
       <span class="arrow-icon">➔</span>
     </a>
 
-    <!-- Bouton 4 : M² Cumulés -->
     <a href="m2-multiple.html" class="menu-btn">
       <div class="btn-left">
         <svg class="btn-icon" viewBox="0 0 24 24">
@@ -257,30 +283,39 @@
       <span class="arrow-icon">➔</span>
     </a>
 
-    <!-- Panneau de Réglages Thèmes -->
+    <!-- Menu Hamburger Drawer -->
     <div id="drawer" class="drawer">
       <div class="drawer-header">
         <div class="drawer-title">Paramètres</div>
         <button class="btn-close" onclick="toggleDrawer(false)">✕</button>
       </div>
 
-      <div class="theme-section-title">Couleur du thème</div>
-      <div class="theme-grid">
-        <div class="theme-option" onclick="setTheme('#10b981', '16, 185, 129')">
-          <div class="color-dot" style="background: #10b981;"></div>
-          <span>Vert Néon</span>
-        </div>
-        <div class="theme-option" onclick="setTheme('#3b82f6', '59, 130, 246')">
-          <div class="color-dot" style="background: #3b82f6;"></div>
-          <span>Bleu Néon</span>
-        </div>
-        <div class="theme-option" onclick="setTheme('#a855f7', '168, 85, 247')">
-          <div class="color-dot" style="background: #a855f7;"></div>
-          <span>Violet Néon</span>
-        </div>
-        <div class="theme-option" onclick="setTheme('#f97316', '249, 115, 22')">
-          <div class="color-dot" style="background: #f97316;"></div>
-          <span>Orange Néon</span>
+      <div class="setting-group">
+        <div class="theme-section-title">Mode d'affichage</div>
+        <button class="mode-toggle-btn" onclick="toggleDisplayMode()">
+          <span id="mode-icon">☀️</span> <span id="mode-text">Passer au Mode Clair</span>
+        </button>
+      </div>
+
+      <div class="setting-group">
+        <div class="theme-section-title">Couleur du thème</div>
+        <div class="theme-grid">
+          <div class="theme-option" onclick="setTheme('#10b981', '16, 185, 129')">
+            <div class="color-dot" style="background: #10b981;"></div>
+            <span>Vert Néon</span>
+          </div>
+          <div class="theme-option" onclick="setTheme('#3b82f6', '59, 130, 246')">
+            <div class="color-dot" style="background: #3b82f6;"></div>
+            <span>Bleu Néon</span>
+          </div>
+          <div class="theme-option" onclick="setTheme('#a855f7', '168, 85, 247')">
+            <div class="color-dot" style="background: #a855f7;"></div>
+            <span>Violet Néon</span>
+          </div>
+          <div class="theme-option" onclick="setTheme('#f97316', '249, 115, 22')">
+            <div class="color-dot" style="background: #f97316;"></div>
+            <span>Orange Néon</span>
+          </div>
         </div>
       </div>
     </div>
@@ -299,12 +334,28 @@
       toggleDrawer(false);
     }
 
+    function toggleDisplayMode() {
+      const currentMode = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newMode = currentMode === 'dark' ? 'light' : 'dark';
+      applyDisplayMode(newMode);
+      localStorage.setItem('displayMode', newMode);
+    }
+
+    function applyDisplayMode(mode) {
+      document.documentElement.setAttribute('data-theme', mode);
+      document.getElementById('mode-icon').innerText = mode === 'light' ? '🌙' : '☀️';
+      document.getElementById('mode-text').innerText = mode === 'light' ? 'Passer au Mode Sombre' : 'Passer au Mode Clair';
+    }
+
+    // Charger les préférences
     const savedColor = localStorage.getItem('themeColor');
     const savedRgb = localStorage.getItem('themeRgb');
     if (savedColor && savedRgb) {
       document.documentElement.style.setProperty('--primary-color', savedColor);
       document.documentElement.style.setProperty('--primary-rgb', savedRgb);
     }
+    const savedMode = localStorage.getItem('displayMode') || 'dark';
+    applyDisplayMode(savedMode);
   </script>
 </body>
 </html>
