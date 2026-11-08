@@ -87,6 +87,42 @@
       color: #10b981;
       box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
     }
+
+    .counter-wrapper {
+      display: flex;
+      align-items: center;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .btn-qty {
+      background: #374151;
+      color: #ffffff;
+      border: none;
+      width: 48px;
+      height: 48px;
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      transition: background 0.2s;
+    }
+    .btn-qty:active {
+      background: #10b981;
+    }
+    .counter-input {
+      border: none !important;
+      border-radius: 0 !important;
+      text-align: center;
+      background: transparent !important;
+      font-size: 1.1rem !important;
+      font-weight: 600;
+    }
+
     .results {
       background: rgba(16, 185, 129, 0.05);
       border: 1px solid rgba(16, 185, 129, 0.2);
@@ -116,12 +152,12 @@
 
     <div class="field">
       <label>Longueur (cm)</label>
-      <input type="number" id="length" placeholder="Ex : 250" oninput="calculate()">
+      <input type="number" id="length" inputmode="decimal" placeholder="Ex : 250" oninput="calculate()">
     </div>
 
     <div class="field">
       <label>Largeur (cm)</label>
-      <input type="number" id="width" placeholder="Ex : 120" oninput="calculate()">
+      <input type="number" id="width" inputmode="decimal" placeholder="Ex : 120" oninput="calculate()">
     </div>
 
     <div class="field">
@@ -145,7 +181,11 @@
 
     <div class="field">
       <label>Nombre de tranches</label>
-      <input type="number" id="count" value="1" min="1" oninput="calculate()">
+      <div class="counter-wrapper">
+        <button class="btn-qty" onclick="changeCount(-1)">−</button>
+        <input type="number" id="count" class="counter-input" inputmode="numeric" value="1" min="1" oninput="calculate()">
+        <button class="btn-qty" onclick="changeCount(1)">+</button>
+      </div>
     </div>
 
     <div class="results">
@@ -157,7 +197,7 @@
   </div>
 
   <script>
-    let selectedThickness = 2; // 2 cm par défaut
+    let selectedThickness = 2;
 
     function selectThickness(val, btn) {
       selectedThickness = val;
@@ -166,11 +206,19 @@
       calculate();
     }
 
+    function changeCount(delta) {
+      const input = document.getElementById('count');
+      let val = (parseInt(input.value) || 1) + delta;
+      if (val < 1) val = 1;
+      input.value = val;
+      calculate();
+    }
+
     function calculate() {
       const l = parseFloat(document.getElementById('length').value) || 0;
       const w = parseFloat(document.getElementById('width').value) || 0;
       const count = parseFloat(document.getElementById('count').value) || 1;
-      const density = 2.68; // Densité exacte pierre bleue (2.68 t/m³)
+      const density = 2.68;
 
       const areaSqM = (l * w / 10000) * count;
       const volCuM = (l * w * selectedThickness / 1000000) * count;
