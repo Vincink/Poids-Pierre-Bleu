@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>M³ Cumulés — Pierre Bleue</title>
+  <style>
+    :root {
+      --primary-color: #10b981;
+      --primary-rgb: 16, 185, 129;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      touch-action: manipulation;
+    }
+    body {
+      background-color: #0b0f19;
+      color: #f3f4f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+    .header-calc {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .btn-back {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 8px 12px;
+      color: var(--primary-color);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: color 0.3s;
+    }
+    .btn-back:active {
+      transform: scale(0.95);
+    }
+    h1 {
+      font-size: 1.2rem;
+      color: #ffffff;
+      font-weight: 700;
+      text-align: center;
+      flex-grow: 1;
+    }
+    
+    /* Liste des lignes */
+    .rows-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 260px;
+      overflow-y: auto;
+      margin-bottom: 16px;
+      padding-right: 4px;
+    }
+    .row-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 12px;
+      padding: 8px 12px;
+    }
+    .row-item input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 1rem;
+      outline: none;
+      font-weight: 600;
+    }
+    .row-weight {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      min-width: 75px;
+      text-align: right;
+    }
+    .btn-delete-row {
+      background: none;
+      border: none;
+      color: #ef4444;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    /* Boutons d'action */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-action {
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      padding: 10px;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action:active {
+      transform: scale(0.96);
+    }
+    .btn-add {
+      grid-column: span 2;
+      background: rgba(var(--primary-rgb), 0.15);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+    .btn-reset {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+    }
+    .btn-save {
+      border-color: var(--primary-color);
+      color: #ffffff;
+      background: var(--primary-color);
+    }
+
+    .results {
+      background: rgba(var(--primary-rgb), 0.05);
+      border: 1px solid rgba(var(--primary-rgb), 0.2);
+      border-radius: 16px;
+      padding: 18px 20px;
+      text-align: center;
+    }
+    .secondary-result {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+    .main-result {
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--primary-color);
+      margin: 4px 0;
+      letter-spacing: -0.5px;
+      transition: color 0.3s;
+    }
+    
+    /* Toast message de confirmation */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--primary-color);
+      color: #0b0f19;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      transition: transform 0.3s ease;
+      z-index: 100;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="header-calc">
+      <a href="index.html" class="btn-back">← Accueil</a>
+      <h1>M³ Cumulés</h1>
+      <div style="width: 70px;"></div>
+    </div>
+
+    <!-- Liste dynamique des lignes de conversion -->
+    <div id="rows-container" class="rows-container"></div>
+
+    <!-- Boutons Ajouter / Effacer / Sauvegarder -->
+    <div class="actions-grid">
+      <button class="btn-action btn-add" onclick="addRow()">+ Ajouter une ligne</button>
+      <button class="btn-action btn-reset" onclick="resetAll()">🗑 Effacer tout</button>
+      <button class="btn-action btn-save" onclick="saveData(true)">💾 Enregistrer</button>
+    </div>
+
+    <!-- Poids Total -->
+    <div class="results">
+      <div class="secondary-result" id="totalVol">Total : 0.000 m³</div>
+      <div class="main-result" id="totalT">0.000 T</div>
+      <div class="secondary-result" id="totalKg">0 kg</div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Sauvegardé !</div>
+
+  <script>
+    const DENSITY = 2.68;
+    const container = document.getElementById('rows-container');
+
+    // Appliquer le thème sauvegardé
+    const savedColor = localStorage.getItem('themeColor');
+    const savedRgb = localStorage.getItem('themeRgb');
+    if (savedColor && savedRgb) {
+      document.documentElement.style.setProperty('--primary-color', savedColor);
+      document.documentElement.style.setProperty('--primary-rgb', savedRgb);
+    }
+
+    // Charger les données sauvegardées ou créer une ligne par défaut
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedRows = JSON.parse(localStorage.getItem('m3_saved_rows'));
+      if (savedRows && savedRows.length > 0) {
+        savedRows.forEach(val => addRow(val));
+      } else {
+        addRow();
+      }
+      calculateTotal();
+    });
+
+    function addRow(value = '') {
+      const div = document.createElement('div');
+      div.className = 'row-item';
+      div.innerHTML = `
+        <input type="number" inputmode="decimal" placeholder="Volume m³" value="${value}" oninput="calculateTotal()">
+        <span class="row-weight">0.000 T</span>
+        <button class="btn-delete-row" onclick="removeRow(this)">✕</button>
+      `;
+      container.appendChild(div);
+      div.querySelector('input').focus();
+      calculateTotal();
+    }
+
+    function removeRow(btn) {
+      const rows = container.querySelectorAll('.row-item');
+      if (rows.length > 1) {
+        btn.closest('.row-item').remove();
+      } else {
+        // S'il ne reste qu'une ligne, on remet sa valeur à zéro au lieu de la supprimer
+        const input = rows[0].querySelector('input');
+        input.value = '';
+      }
+      calculateTotal();
+      saveData(false);
+    }
+
+    function calculateTotal() {
+      let totalVol = 0;
+      const rows = container.querySelectorAll('.row-item');
+
+      rows.forEach(row => {
+        const input = row.querySelector('input');
+        const weightSpan = row.querySelector('.row-weight');
+        const vol = parseFloat(input.value) || 0;
+        
+        const tons = vol * DENSITY;
+        totalVol += vol;
+
+        weightSpan.innerText = tons.toFixed(3) + ' T';
+      });
+
+      const totalTons = totalVol * DENSITY;
+      const totalKg = totalTons * 1000;
+
+      document.getElementById('totalVol').innerText = 'Total : ' + totalVol.toFixed(3) + ' m³';
+      document.getElementById('totalT').innerText = totalTons.toFixed(3) + ' T';
+      document.getElementById('totalKg').innerText = Math.round(totalKg).toLocaleString('fr-FR') + ' kg';
+    }
+
+    function resetAll() {
+      container.innerHTML = '';
+      addRow();
+      calculateTotal();
+      localStorage.removeItem('m3_saved_rows');
+      showToast('Réinitialisé !');
+    }
+
+    function saveData(showNotification = true) {
+      const inputs = container.querySelectorAll('input');
+      const values = Array.from(inputs).map(input => input.value);
+      localStorage.setItem('m3_saved_rows', JSON.stringify(values));
+      if (showNotification) {
+        showToast('Enregistré !');
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+  </script>
+</body>
+</html>
